@@ -148,7 +148,7 @@ require("dotenv").config();
 <!--  -->
    <!-- <!-- <!-- * Step Four: On the next screen, scroll down to where you see your client id and client secret. Copy these values down somewhere, you'll need them to use the Spotify API and the [node-spotify-api package](https://www.npmjs.com/package/node-spotify-api). --> --> -->
 
-3. `node liri.js movie-this '<movie name here>'`
+<!-- 3. `node liri.js movie-this '<movie name here>'`
 
    * This will output the following information to your terminal/bash window:
 
@@ -169,7 +169,7 @@ require("dotenv").config();
      
      * It's on Netflix!
    
-   * You'll use the request package to retrieve data from the OMDB API. Like all of the in-class activities, the OMDB API requires an API key. You may use `trilogy`.
+   * You'll use the request package to retrieve data from the OMDB API. Like all of the in-class activities, the OMDB API requires an API key. You may use `trilogy`. -->
 
 4. `node liri.js do-what-it-says`
    

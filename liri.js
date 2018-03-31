@@ -4,11 +4,15 @@ const Spotify = require("node-spotify-api");
 const request = require("request");
 const Twitter = require('twitter');
 const keys = require('./keys');
+var express = require('express');
+var config = require('./config.js');
+
 
 
 let functionName = process.argv[2];
 let functionArgument = process.argv[3];
 
+var router = express.Router(); 
 var spotify = new Spotify (keys.spotifyKeys);
 
 
@@ -33,24 +37,49 @@ function omdb(movieName) {
     });
 }
 
+function myTweets() {
 
-function spotifyThis(songName) {
-    var spotify = new Spotify({
-        id: "48d397ac09a74942811003efc299f4ca",
-        secret: "f4fbb8101aef41499a6ac2cb3ed3ac0d"
-      });
+var T = new Twitter(config);
 
-    spotify.search({
-        type: 'track',
-        query: ""})
-        
-  .then(function(data) {
-    console.log("Artist: " + data.artists[0].name); 
-    console.log("Song Name: " + data.name); 
-    console.log("Spotify Link: " + data.external_urls.spotify); 
-    console.log("Album Name: " + data.album.name);   
+var params = {
+    q: 'Jones2813308004',
+    count: 20,
+    result_type: 'recent',
+}
+
+T.get('search/tweets', params, function (err, data, response) {
+
+    if (!err) {
+
+        for (let i = 0; i < data.statuses.length; i++) {
+
+            let id = { id: data.statuses[i].id_str }
+
+            console.log(JSON.stringify(data.statuses[i].user.name));
+            console.log(JSON.stringify(data.statuses[i].created_at, null, 10));
+            console.log(data.statuses[i].text)
+            console.log("=======================================")
+        }
     }
-)};
+});
+}
+        function spotifyThis(songName) {
+            var spotify = new Spotify({
+                id: "48d397ac09a74942811003efc299f4ca",
+                secret: "f4fbb8101aef41499a6ac2cb3ed3ac0d"
+            });
+        
+            spotify.search({
+                type: 'track',
+                query: ""})
+                
+        .then(function(data) {
+            console.log("Artist: " + data.artists[0].name); 
+            console.log("Song Name: " + data.name); 
+            console.log("Spotify Link: " + data.external_urls.spotify); 
+            console.log("Album Name: " + data.album.name);   
+            }
+        )};
 
 function runFunct() {
     switch (functionName) {
