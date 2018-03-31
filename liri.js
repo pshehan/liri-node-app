@@ -1,11 +1,15 @@
 require("dotenv").config();
 
-const Spotify = require("spotify")
+const Spotify = require("node-spotify-api");
 const request = require("request");
 const Twitter = require('twitter');
+const keys = require('./keys');
+
 
 let functionName = process.argv[2];
 let functionArgument = process.argv[3];
+
+var spotify = new Spotify (keys.spotifyKeys);
 
 
 function omdb(movieName) {
@@ -29,32 +33,24 @@ function omdb(movieName) {
     });
 }
 
-function spotifyThis(artistName) {
-    console.log("Artist Name: " + artistName);
-    var queryUrl = "https://api.spotify.com/v1/search?q=" + artistName + '&type=artist&limit=1';
 
-    request(queryUrl, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
+function spotifyThis(songName) {
+    var spotify = new Spotify({
+        id: "48d397ac09a74942811003efc299f4ca",
+        secret: "f4fbb8101aef41499a6ac2cb3ed3ac0d"
+      });
 
-        }
-
-
-
-    });
-}
-
-function myTweets(twit) {
-    var twit = "search/tweets"  {q: 'pshehan'}, function(error, tweets, response) {
-        console.log(twit);
-
-        });
-
-
-
-    };
-
-
-
+    spotify.search({
+        type: 'track',
+        query: ""})
+        
+  .then(function(data) {
+    console.log("Artist: " + data.artists[0].name); 
+    console.log("Song Name: " + data.name); 
+    console.log("Spotify Link: " + data.external_urls.spotify); 
+    console.log("Album Name: " + data.album.name);   
+    }
+)};
 
 function runFunct() {
     switch (functionName) {
@@ -62,7 +58,7 @@ function runFunct() {
             omdb(functionArgument);
             break;
         case "spotify-this":
-            spotifyThis(functionArgument);
+        spotifyThis(functionArgument);
             break;
         case "my-tweets":
         myTweets(functionArgument);
