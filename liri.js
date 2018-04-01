@@ -1,9 +1,8 @@
 require("dotenv").config();
 
-const Spotify = require("node-spotify-api");
+var spotify = require ("spotify");
 const request = require("request");
 const Twitter = require('twitter');
-const keys = require('./keys');
 var express = require('express');
 var config = require('./config.js');
 
@@ -12,16 +11,15 @@ var config = require('./config.js');
 let functionName = process.argv[2];
 let functionArgument = process.argv[3];
 
-var router = express.Router(); 
-var spotify = new Spotify (keys.spotifyKeys);
+var router = express.Router();
 
 
 function omdb(movieName) {
-    
+
     var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&apikey=trilogy";
 
-    
-    
+
+
     request(queryUrl, function (error, response, body) {
         if (!error && response.statusCode === 200) {
 
@@ -39,58 +37,69 @@ function omdb(movieName) {
 
 function myTweets() {
 
-var T = new Twitter(config);
+    var T = new Twitter(config);
 
-var params = {
-    q: 'Jones2813308004',
-    count: 20,
-    result_type: 'recent',
-}
-
-T.get('search/tweets', params, function (err, data, response) {
-
-    if (!err) {
-
-        for (let i = 0; i < data.statuses.length; i++) {
-
-            let id = { id: data.statuses[i].id_str }
-
-            console.log(JSON.stringify(data.statuses[i].user.name));
-            console.log(JSON.stringify(data.statuses[i].created_at, null, 10));
-            console.log(data.statuses[i].text)
-            console.log("=======================================")
-        }
+    var params = {
+        q: 'Jones2813308004',
+        count: 20,
+        result_type: 'recent',
     }
-});
-}
-        function spotifyThis(songName) {
-            var spotify = new Spotify({
-                id: "48d397ac09a74942811003efc299f4ca",
-                secret: "f4fbb8101aef41499a6ac2cb3ed3ac0d"
-            });
-        
-            spotify.search({
-                type: 'track',
-                query: ""})
-                
-        .then(function(data) {
-            console.log("Artist: " + data.artists[0].name); 
-            console.log("Song Name: " + data.name); 
-            console.log("Spotify Link: " + data.external_urls.spotify); 
-            console.log("Album Name: " + data.album.name);   
+
+    T.get('search/tweets', params, function (err, data, response) {
+
+        if (!err) {
+
+            for (let i = 0; i < data.statuses.length; i++) {
+
+                let id = { id: data.statuses[i].id_str }
+
+                console.log(JSON.stringify(data.statuses[i].user.name));
+                console.log(JSON.stringify(data.statuses[i].created_at, null, 10));
+                console.log(data.statuses[i].text)
+                console.log("=======================================")
             }
-        )};
+        }
+    });
+}
+
+function spotifyThisSong(songName) {
+    var songName = process.argv[3];
+
+    params = songName;
+
+    console.log("You searched for: " + songName);
+
+
+    spotify.search({
+        type: 'track',
+        query: params,
+      }, function (err, songInfo) {
+        if (err) {
+          console.log("You Searched For: The Sign");
+          console.log("Artist: Ace of Base");
+          console.log("Song Title: I Saw the Sign");
+          console.log("Preview Link of Song: https://open.spotify.com/track/0hrBpAOgrt8RXigk83LLNE");
+          console.log("Album: The Sign (US Album) [Remastered]");
+        }
+        var songInfo = info.tracks.items[0];
+        console.log("Artist: " + info.artists[0].name);
+        console.log("Song Title: " + info.name);
+        console.log("Preview Link of Song: " + info.external_urls.spotify);
+        console.log("Album: " + info.album.name);
+      });
+    }
+
 
 function runFunct() {
     switch (functionName) {
         case "movie-this":
             omdb(functionArgument);
             break;
-        case "spotify-this":
-        spotifyThis(functionArgument);
+        case "spotify-this-song":
+            spotifyThisSong(functionArgument);
             break;
         case "my-tweets":
-        myTweets(functionArgument);
+            myTweets(functionArgument);
 
             break;
     }
