@@ -1,19 +1,26 @@
 require("dotenv").config();
 
-var spotify = require ("spotify");
+var Spotify = require ("node-spotify-api");
+var spotify = new Spotify
+({
+    id: "48d397ac09a74942811003efc299f4ca",
+    secret: "f4fbb8101aef41499a6ac2cb3ed3ac0d"
+});
+            
 const request = require("request");
 const Twitter = require('twitter');
 var express = require('express');
 var config = require('./config.js');
 
-
+var file = require('file-system');
+var fs = require('fs');
 
 let functionName = process.argv[2];
 let functionArgument = process.argv[3];
 
 var router = express.Router();
-
-
+            
+            
 function omdb(movieName) {
 
     var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&apikey=trilogy";
@@ -39,7 +46,7 @@ function myTweets() {
 
     var T = new Twitter(config);
 
-    var params = {
+    let params = {
         q: 'Jones2813308004',
         count: 20,
         result_type: 'recent',
@@ -63,31 +70,37 @@ function myTweets() {
 }
 
 function spotifyThisSong(songName) {
-    var songName = process.argv[3];
-
-    params = songName;
-
     console.log("You searched for: " + songName);
-
 
     spotify.search({
         type: 'track',
-        query: params,
-      }, function (err, songInfo) {
+        query: songName
+      }, function (err, data) {
         if (err) {
-          console.log("You Searched For: The Sign");
-          console.log("Artist: Ace of Base");
-          console.log("Song Title: I Saw the Sign");
-          console.log("Preview Link of Song: https://open.spotify.com/track/0hrBpAOgrt8RXigk83LLNE");
-          console.log("Album: The Sign (US Album) [Remastered]");
+            return console.log('Error occurred: ' + err);
         }
-        var songInfo = info.tracks.items[0];
-        console.log("Artist: " + info.artists[0].name);
-        console.log("Song Title: " + info.name);
-        console.log("Preview Link of Song: " + info.external_urls.spotify);
-        console.log("Album: " + info.album.name);
+        var songInfo = data.tracks.items[0];
+        console.log("Artist: " + songInfo.artists[0].name);
+        console.log("Song Title: " + songInfo.name);
+        console.log("Preview Link of Song: " + songInfo.external_urls.spotify);
+        console.log("Album: " + songInfo.album.name);
       });
     }
+
+    function doThis() {
+        fs.readFile('random.txt', 'utf8', function(err, data) {
+            console.log(data);
+
+            if (err) {
+                console.log(error);
+            } else {
+                var dataArr = data.split(',');
+                if (dataArr[0] === 'spotify') {
+                    spotifyThis(dataArr[1]);
+                }
+            }
+        });
+    } 
 
 
 function runFunct() {
@@ -100,7 +113,9 @@ function runFunct() {
             break;
         case "my-tweets":
             myTweets(functionArgument);
-
+            break;
+        case "do-this":
+            doThis(functionArgument);
             break;
     }
 }
